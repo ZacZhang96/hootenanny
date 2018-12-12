@@ -26,7 +26,9 @@
  */
 package hoot.services.controllers.conflation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +39,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import hoot.services.UnitTest;
-
+import hoot.services.models.db.Users;
 
 public class ConflateCommandTest {
 
@@ -52,7 +54,6 @@ public class ConflateCommandTest {
         conflateParams.setInputType2("DB");
         conflateParams.setInput2("DcTigerRoads");
         conflateParams.setOutputName("Merged_Roads_e0d");
-        conflateParams.setUserEmail("test@test.com");
         conflateParams.setCollectStats(false);
         conflateParams.setReferenceLayer("1");
 
@@ -85,17 +86,17 @@ public class ConflateCommandTest {
 
         assertTrue(conflateCommand.getSubstitutionMap().containsKey("HOOT_OPTIONS"));
         assertEquals("[-D, convert.ops=hoot::DecomposeBuildingRelationsVisitor, " +
-                              "-D, writer.include.conflate.score.tags=false, " +
-                              "-D, hootapi.db.writer.overwrite.map=true, " +
-                              "-D, writer.text.status=true, " +
-                              "-D, api.db.email=test@test.com, " +
-                              "-D, \"map.cleaner.transforms=hoot::ReprojectToPlanarOp;" +
-                                    "hoot::DuplicateWayRemover;hoot::SuperfluousWayRemover;" +
-                                    "hoot::IntersectionSplitter;hoot::UnlikelyIntersectionRemover;" +
-                                    "hoot::DualWaySplitter;hoot::ImpliedDividedMarker;" +
-                                    "hoot::DuplicateNameRemover;hoot::SmallWayMerger;" +
-                                    "hoot::RemoveEmptyAreasVisitor;hoot::RemoveDuplicateAreaVisitor;" +
-                                    "hoot::NoInformationElementRemover\"]",
+                "-D, writer.include.conflate.score.tags=false, " +
+                "-D, hootapi.db.writer.overwrite.map=true, " +
+                "-D, writer.text.status=true, " +
+                "-D, api.db.email=" + Users.TEST_USER.getEmail() + ", " +
+                "-D, \"map.cleaner.transforms=hoot::ReprojectToPlanarOp;" +
+                "hoot::DuplicateWayRemover;hoot::SuperfluousWayRemover;" +
+                "hoot::IntersectionSplitter;hoot::UnlikelyIntersectionRemover;" +
+                "hoot::DualWaySplitter;hoot::ImpliedDividedMarker;" +
+                "hoot::DuplicateNameRemover;hoot::SmallWayMerger;" +
+                "hoot::RemoveEmptyAreasVisitor;hoot::RemoveDuplicateAreaVisitor;" +
+                "hoot::NoInformationElementRemover\"]",
                 conflateCommand.getSubstitutionMap().get("HOOT_OPTIONS").toString());
 
         assertEquals("hootapidb://${HOOTAPI_DB_USER}:${HOOTAPI_DB_PASSWORD}@${HOOTAPI_DB_HOST}:${HOOTAPI_DB_PORT}/${HOOTAPI_DB_NAME}/DcGisRoads", conflateCommand.getSubstitutionMap().get("INPUT1"));
